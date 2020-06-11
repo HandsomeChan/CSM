@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<c3p0-config>
+
+    <default-config>
+        <property name="driverClass">com.mysql.cj.jdbc.Driver</property>
+        <property name="jdbcUrl">jdbc:mysql://localhost:3306/csm?serverTimezone=GMT%2B8</property>
+        <property name="user">root</property>
+        <property name="password">root</property>
+        <property name="initialPoolSize">1</property>
+        <property name="maxIdleTime">30</property>
+        <property name="maxPoolSize">20</property>
+        <property name="minPoolSize">1</property>
+    </default-config>
+
+    <named-config name="test">
+        <property name="driverClass">com.mysql.cj.jdbc.Driver</property>
+        <property name="jdbcUrl">jdbc:mysql://localhost:3306/csm?serverTimezone=GMT%2B8</property>
+        <property name="user">root</property>
+        <property name="password">root</property>
+        <property name="initialPoolSize">1</property>
+        <property name="maxIdleTime">30</property>
+        <property name="maxPoolSize">20</property>
+        <property name="minPoolSize">1</property>
+    </named-config>
+
+
+</c3p0-config>
