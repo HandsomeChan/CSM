@@ -2,7 +2,8 @@
 <%@ page import="Dao.UserDao" %>
 <%@ page import="java.util.List" %>
 <%@ page import="Bean.Loginlogs" %>
-<%@ page import="Bean.Users" %><%--
+<%@ page import="Bean.Users" %>
+<%@ page import="Dao.FoodDao" %><%--
   Created by IntelliJ IDEA.
   User: HandsomeChen
   Date: 2020/6/7
@@ -76,7 +77,9 @@
 </head>
 <body>
 <%
-    List<Loginlogs> list= UserDao.getLogin();
+    FoodDao foodDao=new FoodDao();
+    UserDao userDao=new UserDao();
+    List<Loginlogs> list= userDao.getLogin();
     int pageSize=20;
     int allpages=(int) Math.ceil(list.size()/pageSize);
 %>
@@ -125,7 +128,7 @@
             <td><%=ll.getIp()%></td>
             <td><%=ll.getRole()%></td>
             <td><%=ll.getAction()%></td>
-            <td><a href="/Block?uname=<%=ll.getUsername()%>&role=<%=ll.getRole()%>&page=<%=currentpage%>&login=1">
+            <td><a href="Block?uname=<%=ll.getUsername()%>&role=<%=ll.getRole()%>&page=<%=currentpage%>&login=1">
                 <button class="bos">封锁账号</button> </a> </td>
         </tr>
         <%

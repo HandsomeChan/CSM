@@ -1,4 +1,5 @@
 import Bean.Users;
+import Dao.FoodDao;
 import Dao.UserDao;
 import SendEmail.NotifyEmail;
 
@@ -18,15 +19,17 @@ public class Free extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession hs=request.getSession();
+        FoodDao foodDao=new FoodDao();
+        UserDao userDao=new UserDao();
         Users user=(Users) hs.getAttribute("user");
         if (user==null||user.getRole()!=2){
             return;
         }
         String uname=request.getParameter("uname");
         int page=Integer.valueOf(request.getParameter("page"));
-        boolean success= UserDao.setFree(uname);
+        boolean success= userDao.setFree(uname);
         if (success){
-            String email=UserDao.getEmail(uname);
+            String email=userDao.getEmail(uname);
             String message="您的账户"+uname+"已经成功解封！";
             NotifyEmail.sendMail(email,message);
         }

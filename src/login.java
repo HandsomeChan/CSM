@@ -17,6 +17,8 @@ public class login extends javax.servlet.http.HttpServlet {
     }
     protected void doGet(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException {
         response.setContentType("text/html;charset=utf-8");
+        FoodDao foodDao=new FoodDao();
+        UserDao userDao=new UserDao();
         String email=request.getParameter("email");
         String password=request.getParameter("password");
         String roles=request.getParameter("role");
@@ -37,7 +39,7 @@ public class login extends javax.servlet.http.HttpServlet {
         }
         int role=roles.equals("customer")?0:roles.equals("boss")?1:2;
         String r=roles.equals("customer")?"顾客":roles.equals("boss")?"店家":"管理员";
-        Users user= UserDao.login(email,password,role);
+        Users user= userDao.login(email,password,role);
         if (user!=null){
             //设置日志文件
             if (role!=2) {
@@ -46,7 +48,7 @@ public class login extends javax.servlet.http.HttpServlet {
                 String t = sbf.format(d);
                 String ip = GetIp.getIpAddress(request);
                 String act="登入";
-                UserDao.lologs(user.getEmail(), user.getUname(), t, ip, r,act);
+                userDao.lologs(user.getEmail(), user.getUname(), t, ip, r,act);
             }
             HttpSession session=request.getSession();
             session.setAttribute("user",user);

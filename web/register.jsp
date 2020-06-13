@@ -40,7 +40,7 @@
     <strong style="font-size: 30px;">注册</strong>
     <br>
     <br>
-    <form action="/regist" method="post">
+    <form action="regist" method="post">
         E-mail
         <input type="email" style="margin-left: 15px" name="email">
         <br>

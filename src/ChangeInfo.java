@@ -1,4 +1,5 @@
 import Bean.Users;
+import Dao.FoodDao;
 import Dao.UserDao;
 
 import javax.servlet.ServletException;
@@ -19,6 +20,8 @@ public class ChangeInfo extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession httpSession=request.getSession();
+        FoodDao foodDao=new FoodDao();
+        UserDao userDao=new UserDao();
         if(httpSession.getAttribute("user")==null){
             request.getRequestDispatcher("login.jsp").forward(request,response);
             return;
@@ -42,7 +45,7 @@ public class ChangeInfo extends HttpServlet {
             money=Double.valueOf(request.getParameter("money"));
         }
         boolean re=true;
-        if (!UserDao.checkName(username)&&!username.equals(user.getUname())){
+        if (!userDao.checkName(username)&&!username.equals(user.getUname())){
             re=false;
             httpSession.setAttribute("repeat",re);
             if(role==0)
@@ -51,7 +54,7 @@ public class ChangeInfo extends HttpServlet {
                 response.sendRedirect("BossInfo.jsp");
             return;
         }
-        Users success= UserDao.UpdateInfo(email,username,password,money,role);
+        Users success= userDao.UpdateInfo(email,username,password,money,role);
         boolean su=false;
         if (success!=null){
             Date d = new Date();
@@ -61,15 +64,15 @@ public class ChangeInfo extends HttpServlet {
             String event;
             if (!username.equals(user.getUname())) {
                 event="修改了用户名为"+username;
-                UserDao.oprLogs(user.getUname(), user.getEmail(), r, t, event);
+                userDao.oprLogs(user.getUname(), user.getEmail(), r, t, event);
             }
             if (!password.equals(user.getPassword())) {
                 event="修改了密码";
-                UserDao.oprLogs(user.getUname(), user.getEmail(), r, t, event);
+                userDao.oprLogs(user.getUname(), user.getEmail(), r, t, event);
             }
             if (money!=0) {
                 event="往账户充值了"+money;
-                UserDao.oprLogs(user.getUname(), user.getEmail(), r, t, event);
+                userDao.oprLogs(user.getUname(), user.getEmail(), r, t, event);
             }
             httpSession.setAttribute("user",success);
             su=true;

@@ -22,10 +22,12 @@ public class DelectFood extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (request.getParameter("id")==null)
             return;
+        FoodDao foodDao=new FoodDao();
+        UserDao userDao=new UserDao();
         int id=Integer.valueOf(request.getParameter("id"));
-        String email=FoodDao.findboss(id);
-        Foods f=FoodDao.getFood(id);
-        boolean success= FoodDao.deleFood(id);
+        String email=foodDao.findboss(id);
+        Foods f=foodDao.getFood(id);
+        boolean success= foodDao.deleFood(id);
         Users user=(Users)request.getSession().getAttribute("user");
         int role=user.getRole();
         if (role==1) {
@@ -35,7 +37,7 @@ public class DelectFood extends HttpServlet {
             SimpleDateFormat sbf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String t = sbf.format(d);
             event = "下架了商品" + id;
-            UserDao.oprLogs(user.getUname(), user.getEmail(), r, t, event);
+            userDao.oprLogs(user.getUname(), user.getEmail(), r, t, event);
             request.getSession().setAttribute("dele", success);
             response.sendRedirect("MyFoods");
         }

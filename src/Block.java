@@ -1,4 +1,5 @@
 import Bean.Users;
+import Dao.FoodDao;
 import Dao.UserDao;
 import SendEmail.NotifyEmail;
 
@@ -18,6 +19,8 @@ public class Block extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession hs=request.getSession();
+        FoodDao foodDao=new FoodDao();
+        UserDao userDao=new UserDao();
         Users user=(Users) hs.getAttribute("user");
         if (user==null||user.getRole()!=2){
             return;
@@ -26,9 +29,9 @@ public class Block extends HttpServlet {
         String role=request.getParameter("role");
         int page=Integer.valueOf(request.getParameter("page"));
         int login=Integer.valueOf(request.getParameter("login"));
-        boolean success= UserDao.block(uname,role);
+        boolean success= userDao.block(uname,role);
         if (success){
-            String email=UserDao.getEmail(uname);
+            String email=userDao.getEmail(uname);
             String message="您的账户"+uname+"因为违规被管理员封了，请联系管理员了解具体情形。";
             NotifyEmail.sendMail(email,message);
         }

@@ -63,7 +63,7 @@
                     }
                     else {
                         out.print("欢迎您，" + user.getUname()+"，");
-                        out.print("<a href=\"/logout\">点击登出</a>");
+                        out.print("<a href=\"logout\">点击登出</a>");
                     }
                 %>
             </td>

@@ -1,6 +1,7 @@
 import Bean.Foods;
 import Bean.Users;
 import Dao.FoodDao;
+import Dao.UserDao;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,6 +20,8 @@ public class MyFoods extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession httpSession=request.getSession();
+        FoodDao foodDao=new FoodDao();
+        UserDao userDao=new UserDao();
         if (httpSession.getAttribute("user")==null){
             response.sendRedirect("BossFirstPage.jsp");
             return;
@@ -49,10 +52,10 @@ public class MyFoods extends HttpServlet {
             return;
         }
 //        System.out.println(type);
-        ArrayList<Foods> allfoods = FoodDao.getMyFoods(boss.getUname(),type, (currentPage - 1) * pageSize, pageSize);
+        ArrayList<Foods> allfoods = foodDao.getMyFoods(boss.getUname(),type, (currentPage - 1) * pageSize, pageSize);
 //        System.out.println(allfoods.size());
         //总页数，向上取整
-        int allpages = (int) Math.ceil(FoodDao.getBossNum(boss.getUname(),type) / pageSize);
+        int allpages = (int) Math.ceil(foodDao.getBossNum(boss.getUname(),type) / pageSize);
         request.setAttribute("type", type);
         request.setAttribute("pages", allpages);
         request.setAttribute("foods", allfoods);

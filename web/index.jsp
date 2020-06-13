@@ -27,7 +27,7 @@
   </style>
   <script>
     function next() {
-        window.location="/PageContent";
+        window.location="PageContent";
     }
   </script>
   <body>

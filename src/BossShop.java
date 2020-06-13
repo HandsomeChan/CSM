@@ -1,6 +1,7 @@
 import Bean.Foods;
 import Bean.Users;
 import Dao.FoodDao;
+import Dao.UserDao;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -56,10 +57,12 @@ public class BossShop extends HttpServlet {
             return;
         }
 //        System.out.println(type);
-        ArrayList<Foods> allfoods = FoodDao.getMyFoods(boss,type, (currentPage - 1) * pageSize, pageSize);
+        FoodDao foodDao=new FoodDao();
+        UserDao userDao=new UserDao();
+        ArrayList<Foods> allfoods = foodDao.getMyFoods(boss,type, (currentPage - 1) * pageSize, pageSize);
 //        System.out.println(allfoods.size());
         //总页数，向上取整
-        int allpages = (int) Math.ceil(FoodDao.getBossNum(boss,type) / pageSize);
+        int allpages = (int) Math.ceil(foodDao.getBossNum(boss,type) / pageSize);
         System.out.println(allpages);
         request.setAttribute("type", type);
         request.setAttribute("pages", allpages);

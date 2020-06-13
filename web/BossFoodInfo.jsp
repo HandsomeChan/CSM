@@ -1,5 +1,6 @@
 <%@ page import="Bean.Foods" %>
-<%@ page import="Dao.FoodDao" %><%--
+<%@ page import="Dao.FoodDao" %>
+<%@ page import="Dao.UserDao" %><%--
   Created by IntelliJ IDEA.
   User: HandsomeChen
   Date: 2020/6/5
@@ -43,7 +44,9 @@
                 id=(int) ses.getAttribute("fid");
             else
                 id=Integer.valueOf(sid);
-        Foods food= FoodDao.getFood(id);
+        FoodDao foodDao=new FoodDao();
+        UserDao userDao=new UserDao();
+        Foods food= foodDao.getFood(id);
         Users u=(Users) ses.getAttribute("user");
         ses.setAttribute("fid",id);
     %>

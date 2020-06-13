@@ -1,7 +1,8 @@
 <%@ page import="Bean.Users" %>
 <%@ page import="Bean.Foods" %>
 <%@ page import="java.util.List" %>
-<%@ page import="Dao.FoodDao" %><%--
+<%@ page import="Dao.FoodDao" %>
+<%@ page import="Dao.UserDao" %><%--
   Created by IntelliJ IDEA.
   User: HandsomeChen
   Date: 2020/6/2
@@ -102,7 +103,9 @@
         </form>
     </table>
 <%
-    List<Foods> allfoods= FoodDao.recommend(us.getUname());
+    FoodDao foodDao=new FoodDao();
+    UserDao userDao=new UserDao();
+    List<Foods> allfoods= foodDao.recommend(us.getUname());
     if (allfoods!=null&&allfoods.size()!=0){
 %>
 <table class="tb">

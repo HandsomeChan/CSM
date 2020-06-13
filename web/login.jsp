@@ -45,7 +45,7 @@
         <strong style="font-size: 30px;">登录</strong>
         <br>
         <br>
-        <form action="/login" method="post">
+        <form action="login" method="post">
         E-mail
             <input type="email" style="margin-left: 7px" name="email" id="em">
             <br>

@@ -26,6 +26,8 @@
     <div style="text-align: center">
     <table class="tb">
     <%
+        FoodDao foodDao=new FoodDao();
+        UserDao userDao=new UserDao();
         int pageSize=(int) request.getAttribute("pagesize");
         int rowSize=4;
         HttpSession httpSession=request.getSession();
@@ -39,7 +41,7 @@
                 httpSession.removeAttribute("ftype");
                 int end = time.getSecond();
                 int look=end-begin;
-                UserDao.lookLogs(user.getEmail(),user.getUname(),type,look);
+                userDao.lookLogs(user.getEmail(),user.getUname(),type,look);
             }
         }
         int currentpage=(int) request.getAttribute("currentpage");
@@ -76,7 +78,7 @@
                         httpSession.setAttribute("cp",currentpage);
                         httpSession.setAttribute("ty",type);
                         String loginUrl="login.jsp";
-                        String carUrl="/MyCar?id="+f.getId();
+                        String carUrl="MyCar?id="+f.getId();
                     %>
                     <a name="a1" onclick="check()" href=<%=users==null?loginUrl:carUrl%>><button class="bos">添加到餐单</button></a>
                         <script>

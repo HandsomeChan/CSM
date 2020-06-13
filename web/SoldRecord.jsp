@@ -48,8 +48,9 @@
 <jsp:include page="Bosshead.jsp"></jsp:include>
 <jsp:include page="BossMenu.jsp"></jsp:include>
 <%
+    UserDao userDao=new UserDao();
     Users us=(Users) httpSession.getAttribute("user");
-    List<MySoldFood> list= UserDao.getSold(us.getUname());
+    List<MySoldFood> list= userDao.getSold(us.getUname());
     int pageSize=10;
     int allpages=(int) Math.ceil(list.size()/pageSize);
 %>

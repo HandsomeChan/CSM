@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -24,7 +26,11 @@ public class OrderJudge extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        FoodDao foodDao=new FoodDao();
+        UserDao userDao=new UserDao();
         Connection con=C3p0Util.getconn();
+        PreparedStatement ps=null;
+        ResultSet rs=null;
         HttpSession httpSession=request.getSession();
         Users us=(Users) httpSession.getAttribute("user");
         double sum=(double) httpSession.getAttribute("sum");
@@ -32,7 +38,7 @@ public class OrderJudge extends HttpServlet {
         String[] list=(String[]) httpSession.getAttribute("orderlist");
         boolean success=false;
         String message=us.getUname()+"您好，您在CSM消费了"+sum+"元，其中有:\n";
-        if (UserDao.buybuuybuy(con,sum,us.getEmail())){
+        if (userDao.buybuuybuy(con,sum,us.getEmail())){
             for (int i=0;i<list.length;i++){
                 int index=Integer.valueOf(list[i]);
                 int actnum=Integer.valueOf(cart.get(index).getNum());
@@ -40,15 +46,15 @@ public class OrderJudge extends HttpServlet {
                     continue;
                 String boss=cart.get(i).getBoss();
                 double money=cart.get(index).getPrice()*actnum;
-                if (FoodDao.buyFood(con,cart.get(index).getId(),actnum)&&UserDao.moneymoney(con,money,boss)){
+                if (foodDao.buyFood(con,cart.get(index).getId(),actnum)&&userDao.moneymoney(con,money,boss)){
                     message+=cart.get(i).getFoodname()+actnum+"份共"+money+"元\n";
                     Date d = new Date();
                     SimpleDateFormat sbf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     String t=sbf.format(d);
-                    UserDao.buylogs(us.getEmail(),us.getUname(),t,cart.get(i).getBoss(),cart.get(i).getId(),cart.get(i).getFoodname(),actnum,money);
+                    userDao.buylogs(us.getEmail(),us.getUname(),t,cart.get(i).getBoss(),cart.get(i).getId(),cart.get(i).getFoodname(),actnum,money);
                 }
                 else {
-                    C3p0Util.close(con);
+                    C3p0Util.close(rs,ps,con);
                     success=false;
                     request.setAttribute("success",success);
                     request.getRequestDispatcher("OrderPage.jsp").forward(request,response);
@@ -56,7 +62,7 @@ public class OrderJudge extends HttpServlet {
                 }
             }
             message+="您余额还有"+(us.getMoney()-sum)+"元";
-            C3p0Util.close(con);
+            C3p0Util.close(rs,ps,con);
             httpSession.removeAttribute("cart");
             NotifyEmail.sendMail(us.getEmail(),message);
             success=true;
@@ -67,7 +73,7 @@ public class OrderJudge extends HttpServlet {
             success=false;
             request.setAttribute("success",success);
             request.getRequestDispatcher("OrderPage.jsp").forward(request,response);
-            C3p0Util.close(con);
+            C3p0Util.close(rs,ps,con);
         }
     }
 }

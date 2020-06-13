@@ -1,7 +1,8 @@
 <%@ page import="Bean.Users" %>
 <%@ page import="Dao.UserDao" %>
 <%@ page import="Bean.Blocked" %>
-<%@ page import="java.util.List" %><%--
+<%@ page import="java.util.List" %>
+<%@ page import="Dao.FoodDao" %><%--
   Created by IntelliJ IDEA.
   User: HandsomeChen
   Date: 2020/6/8
@@ -75,7 +76,9 @@
 </head>
 <body>
 <%
-    List<Blocked> list= UserDao.getblockes();
+    FoodDao foodDao=new FoodDao();
+    UserDao userDao=new UserDao();
+    List<Blocked> list= userDao.getblockes();
     int pageSize=20;
     int allpages=(int) Math.ceil(list.size()/pageSize);
 %>
@@ -113,7 +116,7 @@
         <tr>
             <td><%=ll.getEmail()%></td>
             <td><%=ll.getUname()%></td>
-            <td><a href="/Free?uname=<%=ll.getUname()%>&page=<%=currentpage%>">
+            <td><a href="Free?uname=<%=ll.getUname()%>&page=<%=currentpage%>">
                 <button class="bos">解封账号</button> </a> </td>
         </tr>
         <%

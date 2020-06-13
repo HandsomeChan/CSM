@@ -131,13 +131,15 @@ public class AddFood extends HttpServlet {
         } catch (FileUploadException e) {
             e.printStackTrace();
         }
-        boolean success=FoodDao.addFood(id,boss.getUname(),name,price,type,intro,pict,add);
+        FoodDao foodDao=new FoodDao();
+        UserDao userDao=new UserDao();
+        boolean success=foodDao.addFood(id,boss.getUname(),name,price,type,intro,pict,add);
         Date d = new Date();
         SimpleDateFormat sbf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String t=sbf.format(d);
         String r="店家";
         String event="上架了商品"+name+"共"+add+"份";
-        UserDao.oprLogs(boss.getUname(),boss.getEmail(),r,t,event);
+        userDao.oprLogs(boss.getUname(),boss.getEmail(),r,t,event);
         httpSession.setAttribute("success",success);
         response.sendRedirect("MyFoods");
     }

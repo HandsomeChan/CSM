@@ -10,18 +10,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDao {
+    public Connection con=null;
     //浏览时间
-    public static void lookLogs(String email,String uname,String type,int length){
-        Connection con=C3p0Util.getconn();
+    public void lookLogs(String email,String uname,String type,int length){
+        PreparedStatement ps=null;
+        ResultSet rs=null;
         boolean tap=false;
         String sql0="select count(0) from lookLogs where uname=? and type=?";
         String sql1="insert into lookLogs values(?,?,?,?)";
         String sql2="update lookLogs set length=length+? where uname=? and type=?";
         try {
-            PreparedStatement ps=con.prepareStatement(sql0);
+            con=C3p0Util.getconn();
+            ps=con.prepareStatement(sql0);
             ps.setObject(1,uname);
             ps.setObject(2,type);
-            ResultSet rs=ps.executeQuery();
+            rs=ps.executeQuery();
             while (rs.next()){
                 if (rs.getInt("count(0)")!=0){
                     tap=true;
@@ -42,95 +45,91 @@ public class UserDao {
                 ps.setObject(3,type);
                 ps.executeLargeUpdate();
             }
-            rs.close();
-            ps.close();
-            con.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }finally {
-            C3p0Util.close(con);
+            C3p0Util.close(rs,ps,con);
         }
     }
     //解封账号
-    public static boolean setFree(String uname) {
-        Connection con = C3p0Util.getconn();
+    public boolean setFree(String uname) {
+        Connection con =null;
         String sql = "update users set role=role+2 where uname=? and role<0";
-        PreparedStatement ps;
+        PreparedStatement ps=null;
+        ResultSet rs=null;
         try {
+            con=C3p0Util.getconn();
             ps = con.prepareStatement(sql);
             ps.setObject(1, uname);
             ps.executeLargeUpdate();
             ps.close();
             con.close();
             return true;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             try {
                 con.rollback(); //回滚此次链接的所有操作
-            } catch (SQLException e1) {
+            } catch (Exception e1) {
                 e1.printStackTrace();
             }
         } finally {
-            C3p0Util.close(con);
+            C3p0Util.close(rs,ps,con);
         }
         return false;
     }
     //查看被封的账号
-    public static List<Blocked> getblockes(){
-        Connection con=C3p0Util.getconn();
+    public List<Blocked> getblockes(){
+        PreparedStatement ps=null;
+        ResultSet rs=null;
         List<Blocked> list=new ArrayList<>();
         String sql="select * from users where role<0";
         try {
-            PreparedStatement ps=con.prepareStatement(sql);
-            ResultSet rs=ps.executeQuery();
+            con=C3p0Util.getconn();
+            ps=con.prepareStatement(sql);
+            rs=ps.executeQuery();
             while (rs.next()){
                 Blocked bl=new Blocked();
                 bl.setEmail(rs.getString("email"));
                 bl.setUname(rs.getString("uname"));
                 list.add(bl);
             }
-            rs.close();
-            ps.close();
-            con.close();
             return list;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }finally {
-            C3p0Util.close(con);
+            C3p0Util.close(rs,ps,con);
         }
         return null;
     }
     //根据用户名找到邮箱
-    public static String getEmail(String uname){
-        Connection con=C3p0Util.getconn();
+    public String getEmail(String uname){
+        PreparedStatement ps=null;
+        ResultSet rs=null;
         String email="";
         String sql="select email from users where uname=?";
-        PreparedStatement ps;
-        ResultSet rs;
         try {
+            con=C3p0Util.getconn();
             ps=con.prepareStatement(sql);
             ps.setObject(1,uname);
             rs=ps.executeQuery();
             while (rs.next()){
                 email=rs.getString("email");
             }
-            rs.close();
-            ps.close();
-            con.close();
             return email;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }finally {
-            C3p0Util.close(con);
+            C3p0Util.close(rs,ps,con);
         }
         return email;
     }
     //封锁用户
-    public static boolean block(String uname,String role){
-        Connection con=C3p0Util.getconn();
+    public boolean block(String uname,String role){
+        PreparedStatement ps=null;
+        ResultSet rs=null;
         String sql="update users set role=role-2 where uname=? and role>=0";
         String sql1="update foods set num=0 where boss=?";
-        PreparedStatement ps;
         try {
+            con=C3p0Util.getconn();
             ps=con.prepareStatement(sql);
             ps.setObject(1,uname);
             ps.executeLargeUpdate();
@@ -142,25 +141,27 @@ public class UserDao {
             ps.close();
             con.close();
             return true;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             try {
                 con.rollback(); //回滚此次链接的所有操作
-            } catch (SQLException e1) {
+            } catch (Exception e1) {
                 e1.printStackTrace();
             }
         }finally {
-            C3p0Util.close(con);
+            C3p0Util.close(rs,ps,con);
         }
         return false;
     }
     //获得操作日志
-    public static List<Oplogs> opLog(){
-        Connection con=C3p0Util.getconn();
+    public List<Oplogs> opLog(){
+        PreparedStatement ps=null;
+        ResultSet rs=null;
         List<Oplogs> list=new ArrayList<>();
         String sql="select * from oplogs order by time desc";
         try {
-            PreparedStatement ps=con.prepareStatement(sql);
-            ResultSet rs=ps.executeQuery();
+            con=C3p0Util.getconn();
+            ps=con.prepareStatement(sql);
+            rs=ps.executeQuery();
             while (rs.next()){
                 Oplogs bl=new Oplogs();
                 bl.setEmail(rs.getString("email"));
@@ -170,25 +171,24 @@ public class UserDao {
                 bl.setEvent(rs.getString("event"));
                 list.add(bl);
             }
-            rs.close();
-            ps.close();
-            con.close();
             return list;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }finally {
-            C3p0Util.close(con);
+            C3p0Util.close(rs,ps,con);
         }
         return null;
     }
     //获得用户购买日志
-    public static List<Buylogs> buyLog(){
-        Connection con=C3p0Util.getconn();
+    public List<Buylogs> buyLog(){
+        PreparedStatement ps=null;
+        ResultSet rs=null;
         List<Buylogs> list=new ArrayList<>();
         String sql="select * from buylogs order by time desc";
         try {
-            PreparedStatement ps=con.prepareStatement(sql);
-            ResultSet rs=ps.executeQuery();
+            con=C3p0Util.getconn();
+            ps=con.prepareStatement(sql);
+            rs=ps.executeQuery();
             while (rs.next()){
                 Buylogs bl=new Buylogs();
                 bl.setEmail(rs.getString("email"));
@@ -200,25 +200,24 @@ public class UserDao {
                 bl.setAllpay(rs.getDouble("allpay"));
                 list.add(bl);
             }
-            rs.close();
-            ps.close();
-            con.close();
             return list;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }finally {
-            C3p0Util.close(con);
+            C3p0Util.close(rs,ps,con);
         }
         return null;
     }
     //获得登录日志
-    public static List<Loginlogs> getLogin(){
-        Connection con=C3p0Util.getconn();
+    public List<Loginlogs> getLogin(){
+        PreparedStatement ps=null;
+        ResultSet rs=null;
         List<Loginlogs> list=new ArrayList<>();
         String sql="select * from loginlogs order by logintime desc";
         try {
-            PreparedStatement ps=con.prepareStatement(sql);
-            ResultSet rs=ps.executeQuery();
+            con=C3p0Util.getconn();
+            ps=con.prepareStatement(sql);
+            rs=ps.executeQuery();
             while (rs.next()){
                 Loginlogs ll=new Loginlogs();
                 ll.setEmail(rs.getString("email"));
@@ -229,23 +228,22 @@ public class UserDao {
                 ll.setAction(rs.getString("action"));
                 list.add(ll);
             }
-            rs.close();
-            ps.close();
-            con.close();
             return list;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }finally {
-            C3p0Util.close(con);
+            C3p0Util.close(rs,ps,con);
         }
         return null;
     }
     //操作日志
-    public static void oprLogs(String uname,String email,String role,String time,String event){
-        Connection con=C3p0Util.getconn();
+    public void oprLogs(String uname,String email,String role,String time,String event){
+        PreparedStatement ps=null;
+        ResultSet rs=null;
         String sql="insert into oplogs values(?,?,?,?,?)";
         try {
-            PreparedStatement ps=con.prepareStatement(sql);
+            con=C3p0Util.getconn();
+            ps=con.prepareStatement(sql);
             ps.setObject(1,uname);
             ps.setObject(2,email);
             ps.setObject(3,role);
@@ -254,20 +252,22 @@ public class UserDao {
             ps.executeLargeUpdate();
             ps.close();
             con.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }finally {
-            C3p0Util.close(con);
+            C3p0Util.close(rs,ps,con);
         }
     }
     //所有店家销售记录
-    public static List<SoldSort> getAllboss(){
-        Connection con=C3p0Util.getconn();
+    public List<SoldSort> getAllboss(){
+        PreparedStatement ps=null;
+        ResultSet rs=null;
         List<SoldSort> list=new ArrayList<>();
         String sql="select users.email as email,users.uname as name,sum(allpay) as earn,sum(num) as nums from users left join buylogs on users.uname=buylogs.boss where users.role=1 group by users.uname,users.email order by nums desc";
         try {
-            PreparedStatement ps=con.prepareStatement(sql);
-            ResultSet rs=ps.executeQuery();
+            con=C3p0Util.getconn();
+            ps=con.prepareStatement(sql);
+            rs=ps.executeQuery();
             while (rs.next()){
                 SoldSort soldSort=new SoldSort();
                 soldSort.setEmail(rs.getString("email"));
@@ -276,26 +276,25 @@ public class UserDao {
                 soldSort.setNum(rs.getInt("nums"));
                 list.add(soldSort);
             }
-            rs.close();
-            ps.close();
-            con.close();
             return list;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }finally {
-            C3p0Util.close(con);
+            C3p0Util.close(rs,ps,con);
         }
         return null;
     }
     //获得卖出记录
-    public static List<MySoldFood> getSold(String boss){
-        Connection con=C3p0Util.getconn();
+    public List<MySoldFood> getSold(String boss){
+        PreparedStatement ps=null;
+        ResultSet rs=null;
         List<MySoldFood> list=new ArrayList<>();
         String sql="select * from buylogs where boss=?";
         try {
-            PreparedStatement ps=con.prepareStatement(sql);
+            con=C3p0Util.getconn();
+            ps=con.prepareStatement(sql);
             ps.setObject(1,boss);
-            ResultSet rs=ps.executeQuery();
+            rs=ps.executeQuery();
             while (rs.next()){
                 MySoldFood s=new MySoldFood();
                 s.setFood(rs.getString("food"));
@@ -307,26 +306,25 @@ public class UserDao {
                 s.setEmail(rs.getString("email"));
                 list.add(s);
             }
-            rs.close();
-            ps.close();
-            con.close();
             return list;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }finally {
-            C3p0Util.close(con);
+            C3p0Util.close(rs,ps,con);
         }
         return null;
     }
     //获得购买记录
-    public static List<MyBuyFood> getRecord(String email){
-        Connection con=C3p0Util.getconn();
+    public List<MyBuyFood> getRecord(String email){
+        PreparedStatement ps=null;
+        ResultSet rs=null;
         List<MyBuyFood> list=new ArrayList<>();
         String sql="select * from buylogs where email=? order by time desc";
         try {
-            PreparedStatement ps=con.prepareStatement(sql);
+            con=C3p0Util.getconn();
+            ps=con.prepareStatement(sql);
             ps.setObject(1,email);
-            ResultSet rs=ps.executeQuery();
+            rs=ps.executeQuery();
             while (rs.next()){
                 MyBuyFood myBuyFood=new MyBuyFood();
                 myBuyFood.setFood(rs.getString("food"));
@@ -337,23 +335,22 @@ public class UserDao {
                 myBuyFood.setNum(rs.getInt("num"));
                 list.add(myBuyFood);
             }
-            rs.close();
-            ps.close();
-            con.close();
             return list;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }finally {
-            C3p0Util.close(con);
+            C3p0Util.close(rs,ps,con);
         }
         return null;
     }
     //购买日志
-    public static void buylogs(String email,String uname,String time,String boss,int foodid,String food,int num,double allpay){
-        Connection con=C3p0Util.getconn();
+    public void buylogs(String email,String uname,String time,String boss,int foodid,String food,int num,double allpay){
+        PreparedStatement ps=null;
+        ResultSet rs=null;
         String sql="insert into buylogs values(?,?,?,?,?,?,?,?)";
         try {
-            PreparedStatement ps=con.prepareStatement(sql);
+            con=C3p0Util.getconn();
+            ps=con.prepareStatement(sql);
             ps.setObject(1,email);
             ps.setObject(2,uname);
             ps.setObject(3,time);
@@ -365,19 +362,21 @@ public class UserDao {
             ps.executeLargeUpdate();
             ps.close();
             con.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }finally {
-            C3p0Util.close(con);
+            C3p0Util.close(rs,ps,con);
         }
     }
     //更新信息
-    public static Users UpdateInfo(String email,String uname,String pwd,double money,int role){
-        Connection con=C3p0Util.getconn();
+    public Users UpdateInfo(String email,String uname,String pwd,double money,int role){
+        PreparedStatement ps=null;
+        ResultSet rs=null;
         String sql="update users set uname=?,password=?,money=money+? where email=? and role=?";
         Users success=new Users();
         try {
-            PreparedStatement ps=con.prepareStatement(sql);
+            con=C3p0Util.getconn();
+            ps=con.prepareStatement(sql);
             ps.setObject(1,uname);
             ps.setObject(2,pwd);
             ps.setObject(3,money);
@@ -388,7 +387,7 @@ public class UserDao {
             ps=con.prepareStatement(sql1);
             ps.setObject(1,email);
             ps.setObject(2,role);
-            ResultSet rs=ps.executeQuery();
+            rs=ps.executeQuery();
             while (rs.next()){
                 success.setEmail(rs.getString("email"));
                 success.setPassword(rs.getString("password"));
@@ -396,44 +395,38 @@ public class UserDao {
                 success.setMoney(rs.getDouble("money"));
                 success.setRole(rs.getInt("role"));
             }
-            rs.close();
-            ps.close();
-            con.close();
             return success;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }finally {
-            C3p0Util.close(con);
+            C3p0Util.close(rs,ps,con);
         }
         return null;
     }
     //顾客的钱数
-    public static double getMoney(String email){
-        Connection con=C3p0Util.getconn();
+    public double getMoney(String email){
+        PreparedStatement ps=null;
+        ResultSet rs=null;
         double m=0;
         String sql="select money from users where email=? and role=0";
-        PreparedStatement ps;
-        ResultSet rs;
         try {
+            con=C3p0Util.getconn();
             ps=con.prepareStatement(sql);
             ps.setObject(1,email);
             rs=ps.executeQuery();
             while (rs.next()){
                 m=rs.getDouble("money");
             }
-            rs.close();
-            ps.close();
-            con.close();
             return m;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }finally {
-            C3p0Util.close(con);
+            C3p0Util.close(rs,ps,con);
         }
         return m;
     }
     //店长收钱
-    public static boolean moneymoney(Connection con,double money,String username){
+    public boolean moneymoney(Connection con,double money,String username){
         String sql="update users set money=money+? where uname=? and role=1";
         try {
             PreparedStatement ps=con.prepareStatement(sql);
@@ -442,17 +435,17 @@ public class UserDao {
             ps.executeLargeUpdate();
             ps.close();
             return true;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             try {
                 con.rollback(); //回滚此次链接的所有操作
-            } catch (SQLException e1) {
+            } catch (Exception e1) {
                 e1.printStackTrace();
             }
         }
         return false;
     }
     //购买扣钱
-    public static boolean buybuuybuy(Connection con,double money,String email){
+    public boolean buybuuybuy(Connection con,double money,String email){
         String sql="update users set money=money-? where email=? and role=0";
         try {
             PreparedStatement ps=con.prepareStatement(sql);
@@ -461,25 +454,27 @@ public class UserDao {
             ps.executeLargeUpdate();
             ps.close();
             return true;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             try {
                 con.rollback(); //回滚此次链接的所有操作
-            } catch (SQLException e1) {
+            } catch (Exception e1) {
                 e1.printStackTrace();
             }
         }
         return false;
     }
     //登录验证
-    public static Users login(String email, String password,int role){
-        Connection con=C3p0Util.getconn();
+    public Users login(String email, String password,int role){
+        PreparedStatement ps=null;
+        ResultSet rs=null;
         String sql="select * from users where email=? and password=? and role=?";
         try {
-            PreparedStatement ps=con.prepareStatement(sql);
+            con=C3p0Util.getconn();
+            ps=con.prepareStatement(sql);
             ps.setObject(1,email);
             ps.setObject(2,password);
             ps.setObject(3,role);
-            ResultSet rs=ps.executeQuery();
+            rs=ps.executeQuery();
             while (rs.next()){
                 Users user=new Users();
                 user.setEmail(rs.getString("email"));
@@ -487,57 +482,53 @@ public class UserDao {
                 user.setRole(rs.getInt("role"));
                 user.setUname(rs.getString("uname"));
                 user.setMoney(rs.getDouble("money"));
-                rs.close();
-                ps.close();
-                con.close();
                 return user;
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         finally {
-            C3p0Util.close(con);
+            C3p0Util.close(rs,ps,con);
         }
         //如果找不到相应的
         return null;
     }
     //用户名不可重复
-    public static boolean checkName(String uname) {
-        Connection con = C3p0Util.getconn();
+    public boolean checkName(String uname) {
+        Connection con = null;
+        PreparedStatement ps=null;
+        ResultSet rs=null;
         boolean ok = true;
         String sql = "select * from users where uname=?";
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            con=C3p0Util.getconn();
+            ps = con.prepareStatement(sql);
             ps.setObject(1, uname);
-            ResultSet rs = ps.executeQuery();
+            rs = ps.executeQuery();
             if (rs.next()) {
                 ok=false;
-                rs.close();
-                ps.close();
-                con.close();
                 return ok;
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }finally {
-            C3p0Util.close(con);
+            C3p0Util.close(rs,ps,con);
         }
         return ok;
     }
         //消费者注册模块
-    public static Users register(String email,String password,String username,int role){
-        Connection con=C3p0Util.getconn();
+    public Users register(String email,String password,String username,int role){
+        PreparedStatement ps=null;
+        ResultSet rs=null;
         //同一角色不能注册两次
         String sql="select * from users where email=? and role=?";
         try {
-            PreparedStatement ps=con.prepareStatement(sql);
+            con=C3p0Util.getconn();
+            ps=con.prepareStatement(sql);
             ps.setObject(1,email);
             ps.setObject(2,role);
-            ResultSet rs=ps.executeQuery();
+            rs=ps.executeQuery();
             if (rs.next()){
-                rs.close();
-                ps.close();
-                con.close();
                 return null;
             }
             else {
@@ -561,23 +552,25 @@ public class UserDao {
                 return user;
             }
         }
-        catch (SQLException e){
+        catch (Exception e){
             try {
                 con.rollback(); //回滚此次链接的所有操作
-            } catch (SQLException e1) {
+            } catch (Exception e1) {
                 e1.printStackTrace();
             }
         }finally {
-            C3p0Util.close(con);
+            C3p0Util.close(rs,ps,con);
         }
         return null;
     }
     //用户登陆日志
-     public static void lologs(String email,String username,String logtime,String ip,String role,String act){
-         Connection con=C3p0Util.getconn();
+     public void lologs(String email,String username,String logtime,String ip,String role,String act){
+         PreparedStatement ps=null;
+         ResultSet rs=null;
          String sql="insert into loginlogs values(?,?,?,?,?,?)";
          try {
-             PreparedStatement ps=con.prepareStatement(sql);
+             con=C3p0Util.getconn();
+             ps=con.prepareStatement(sql);
              ps.setObject(1,email);
              ps.setObject(2,username);
              ps.setObject(3,logtime);
@@ -587,10 +580,10 @@ public class UserDao {
              ps.executeLargeUpdate();
              ps.close();
              con.close();
-         } catch (SQLException e) {
+         } catch (Exception e) {
              e.printStackTrace();
          }finally {
-             C3p0Util.close(con);
+             C3p0Util.close(rs,ps,con);
          }
      }
 }

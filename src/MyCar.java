@@ -25,6 +25,8 @@ public class MyCar extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
+        FoodDao foodDao=new FoodDao();
+        UserDao userDao=new UserDao();
         HttpSession hs=request.getSession();
         List<FoodInfo> cart=(List) hs.getAttribute("cart");
         Users user=(Users) hs.getAttribute("user");
@@ -37,11 +39,12 @@ public class MyCar extends HttpServlet {
             hs.removeAttribute("ftype");
             int end = time.getSecond();
             int look=end-begin;
-            UserDao.lookLogs(user.getEmail(),user.getUname(),type,look);
+            userDao.lookLogs(user.getEmail(),user.getUname(),type,look);
         }
         String boss=request.getParameter("boss");
         String page=request.getParameter("page");
         String type=request.getParameter("type");
+        String myrecord=request.getParameter("myrecord");
 //        System.out.println(boss);
         //用于记录货物是否是分两次加入购物车
         Map<Integer,Integer> map=(Map) hs.getAttribute("map");
@@ -66,7 +69,7 @@ public class MyCar extends HttpServlet {
             id = Integer.valueOf(sid);
         }
 //        System.out.println(id);
-        FoodInfo foodInfo= FoodDao.getInfo(id);
+        FoodInfo foodInfo= foodDao.getInfo(id);
         if (foodInfo==null){
             request.getRequestDispatcher("PageContent").forward(request,response);
             return;
@@ -97,6 +100,10 @@ public class MyCar extends HttpServlet {
 //        System.out.println(boss);
 //        System.out.println(page);
 //        System.out.println(type);
+        if (myrecord!=null&&!myrecord.equals("")){
+            response.sendRedirect("MyRecord.jsp?page="+page);
+            return;
+        }
         if (boss==null||page==null||type==null||boss.equals("")||page.equals("")||type.equals("")){
             request.getRequestDispatcher("PageContent").forward(request,response);
         }

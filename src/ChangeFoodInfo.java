@@ -28,12 +28,14 @@ public class ChangeFoodInfo extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession httpSession=request.getSession();
+        FoodDao foodDao=new FoodDao();
+        UserDao userDao=new UserDao();
         if (httpSession.getAttribute("fid")==null){
             response.sendRedirect("BossFirstPage");
             return;
         }
         int id=(int) httpSession.getAttribute("fid");
-        Foods f=(Foods) FoodDao.getFood(id);
+        Foods f=(Foods) foodDao.getFood(id);
         String name=f.getFoodname();
         Double price=f.getPrice();
         String intro=f.getIntroduction();
@@ -112,7 +114,7 @@ public class ChangeFoodInfo extends HttpServlet {
         } catch (FileUploadException e) {
             e.printStackTrace();
         }
-        boolean success=FoodDao.updateInfo(id,name,price,type,intro,pict,add);
+        boolean success=foodDao.updateInfo(id,name,price,type,intro,pict,add);
         Users user=(Users) httpSession.getAttribute("user");
         Date d = new Date();
         SimpleDateFormat sbf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -121,27 +123,27 @@ public class ChangeFoodInfo extends HttpServlet {
         String event;
         if (!name.equals(f.getFoodname())) {
             event="将食物"+f.getFoodname()+"改名为"+name;
-            UserDao.oprLogs(user.getUname(), user.getEmail(), r, t, event);
+            userDao.oprLogs(user.getUname(), user.getEmail(), r, t, event);
         }
         if (price!=f.getPrice()) {
             event="将食物"+name+"价格修改为"+price;
-            UserDao.oprLogs(user.getUname(), user.getEmail(), r, t, event);
+            userDao.oprLogs(user.getUname(), user.getEmail(), r, t, event);
         }
         if (add!=0) {
             event="食物"+name+"补货了"+add+"份";
-            UserDao.oprLogs(user.getUname(), user.getEmail(), r, t, event);
+            userDao.oprLogs(user.getUname(), user.getEmail(), r, t, event);
         }
         if (!type.equals(f.getType())) {
             event="将食物"+name+"类别修改为"+type;
-            UserDao.oprLogs(user.getUname(), user.getEmail(), r, t, event);
+            userDao.oprLogs(user.getUname(), user.getEmail(), r, t, event);
         }
         if (!intro.equals(f.getIntroduction())) {
             event="将食物"+name+"简介修改为"+intro;
-            UserDao.oprLogs(user.getUname(), user.getEmail(), r, t, event);
+            userDao.oprLogs(user.getUname(), user.getEmail(), r, t, event);
         }
         if (!pict.equals(f.getPicture())) {
             event="修改了食物配图";
-            UserDao.oprLogs(user.getUname(), user.getEmail(), r, t, event);
+            userDao.oprLogs(user.getUname(), user.getEmail(), r, t, event);
         }
         httpSession.setAttribute("success",success);
         response.sendRedirect("BossFoodInfo.jsp?id="+id);

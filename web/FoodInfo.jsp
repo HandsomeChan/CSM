@@ -1,7 +1,8 @@
 <%@ page import="Bean.Foods" %>
 <%@ page import="Dao.FoodDao" %>
 <%@ page import="Bean.Users" %>
-<%@ page import="java.time.LocalDateTime" %><%--
+<%@ page import="java.time.LocalDateTime" %>
+<%@ page import="Dao.UserDao" %><%--
   Created by IntelliJ IDEA.
   User: HandsomeChen
   Date: 2020/6/2
@@ -13,15 +14,19 @@
 <head>
     <%
         String sid=request.getParameter("id");
-        int cpage=Integer.valueOf(request.getParameter("page"));
+        int cpage=0;
+        if (request.getParameter("page")!=null)
+            cpage=Integer.valueOf(request.getParameter("page"));
         String type=request.getParameter("type");
         if (sid==null){
     %>
     <jsp:forward page="/PageContent"></jsp:forward>
     <%
         }else {
+            FoodDao foodDao=new FoodDao();
+            UserDao userDao=new UserDao();
             int id=Integer.valueOf(sid);
-            Foods food= FoodDao.getFood(id);
+            Foods food= foodDao.getFood(id);
             HttpSession ses=request.getSession();
             Users u=(Users) ses.getAttribute("user");
             ses.setAttribute("fid",id);
@@ -54,6 +59,7 @@
         String boss=request.getParameter("boss")==null?"":request.getParameter("boss");
         String cp=request.getParameter("page")==null?"":request.getParameter("page");
         String ty=request.getParameter("type")==null?"":request.getParameter("type");
+        String mr=request.getParameter("myrecord")==null?"":request.getParameter("myrecord");
     %>
     <form name="f" action=<%=u==null?"login.jsp":url%>>
     给我来<input type="number" value="1" min="1" max="500" name="wanted" style="width: 40px"/>份
@@ -61,6 +67,7 @@
         <input value="<%=boss%>" name="boss" style="display: none">
         <input value="<%=cp%>" name="page" style="display: none">
         <input value="<%=ty%>" name="type" style="display: none">
+        <input value="<%=mr%>" name="myrecord" style="display: none">
     <input class="bos" type="submit" value="立即添加到餐单" onclick="check()"/>
 </form>  </dd>
     <dd><a href="BossShop?name=<%=food.getBoss()%>"><button class="bos">去店铺看看</button></a></dd><br>

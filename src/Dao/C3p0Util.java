@@ -19,11 +19,18 @@ public class C3p0Util {
         }
         return connection;
     }
-    public static void close(Connection con){
+    public static void close(ResultSet rs,PreparedStatement ps,Connection con){
         try {
             //暂时先不关闭关闭总是会无法连接数据
+            if (rs!=null){
+                rs.close();
+            }
+            if (ps!=null){
+                ps.close();
+            }
             if(con!=null){
                 con.close();
+//                System.out.println("连接已关闭！");
             }
         } catch (Exception e) {
             e.printStackTrace();

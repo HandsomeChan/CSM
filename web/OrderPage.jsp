@@ -61,6 +61,8 @@
 <jsp:include page="head.jsp"></jsp:include>
 <jsp:include page="menu.jsp"></jsp:include>
 <%
+    FoodDao foodDao=new FoodDao();
+    UserDao userDao=new UserDao();
     String[] list=request.getParameterValues("order");
     List<FoodInfo> cart=(List) httpSession.getAttribute("cart");
     Users us=(Users) httpSession.getAttribute("user");
@@ -98,7 +100,7 @@
             int index=Integer.valueOf(list[i]);
             int actnum=Integer.valueOf(request.getParameter("numberbox"+index));
             cart.get(index).setNum(actnum);
-            int rest=FoodDao.getRest(cart.get(index).getId());
+            int rest=foodDao.getRest(cart.get(index).getId());
             if (actnum>rest){
     %>
         <script>
@@ -136,7 +138,7 @@
 <script>
     function sm() {
         <%
-            if (sum>UserDao.getMoney(us.getEmail())){
+            if (sum>userDao.getMoney(us.getEmail())){
                 %>
         alert("余额不足！请先充值！");
         window.location="MyInfo.jsp";

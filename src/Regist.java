@@ -16,6 +16,7 @@ public class Regist extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
+        UserDao userDao=new UserDao();
         String email=request.getParameter("email");
         String username=request.getParameter("username");
         String password=request.getParameter("password");
@@ -54,13 +55,13 @@ public class Regist extends HttpServlet {
         int role=roles.equals("customer")?0:1;
         String r=roles.equals("customer")?"顾客":"店家";
 //        System.out.println("role"+role);
-        boolean ok=UserDao.checkName(username);
+        boolean ok=userDao.checkName(username);
         if (!ok){
             request.setAttribute("register_message","用户名已被使用，请换一个名字！");
             request.getRequestDispatcher("register.jsp").forward(request,response);
             return;
         }
-        Users user= UserDao.register(email,password,username,role);
+        Users user= userDao.register(email,password,username,role);
         if (user==null){
             request.setAttribute("register_message","电子邮箱已被使用，请检查！");
             request.getRequestDispatcher("register.jsp").forward(request,response);
@@ -73,8 +74,8 @@ public class Regist extends HttpServlet {
         String ip=GetIp.getIpAddress(request);
         String event="注册了账号";
         String act="登入";
-        UserDao.oprLogs(user.getUname(),user.getEmail(),r,t,event);
-        UserDao.lologs(user.getEmail(),user.getUname(),t,ip,r,act);
+        userDao.oprLogs(user.getUname(),user.getEmail(),r,t,event);
+        userDao.lologs(user.getEmail(),user.getUname(),t,ip,r,act);
         HttpSession session=request.getSession();
         session.setAttribute("user",user);
         Cookie cookie=new Cookie("JSESSIONID",session.getId());

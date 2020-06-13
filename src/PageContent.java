@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,9 +46,15 @@ public class PageContent extends HttpServlet {
             return;
         }
 //        System.out.println(type);
-        ArrayList<Foods> allfoods= FoodDao.getfoods(type,(currentPage-1)*pageSize,pageSize);
+        ArrayList<Foods> allfoods= null;
+        FoodDao foodDao=new FoodDao();
+        try {
+            allfoods = foodDao.getfoods(type,(currentPage-1)*pageSize,pageSize);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         //总页数，向上取整
-        int allpages=(int) Math.ceil(FoodDao.getNum(type)/pageSize);
+        int allpages=(int) Math.ceil(foodDao.getNum(type)/pageSize);
         request.setAttribute("type",type);
         request.setAttribute("pages",allpages);
         request.setAttribute("foods",allfoods);

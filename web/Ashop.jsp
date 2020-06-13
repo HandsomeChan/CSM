@@ -38,6 +38,8 @@
 <body>
 <%@include file="head.jsp"%>
 <%
+    FoodDao foodDao=new FoodDao();
+    UserDao userDao=new UserDao();
     String boss=(String) request.getAttribute("boss");
     HttpSession httpSession=request.getSession();
     if (httpSession.getAttribute("user")!=null){
@@ -50,7 +52,7 @@
             httpSession.removeAttribute("ftype");
             int end = time.getSecond();
             int look=end-begin;
-            UserDao.lookLogs(u.getEmail(),u.getUname(),type,look);
+            userDao.lookLogs(u.getEmail(),u.getUname(),type,look);
         }
     }
 %>
@@ -134,7 +136,7 @@
                                 httpSession.setAttribute("cp",currentpage);
                                 httpSession.setAttribute("ty",type);
                                 String loginUrl="login.jsp";
-                                String carUrl="/MyCar?id="+f.getId()+"&boss="+boss+"&page="+currentpage+"&type="+type;
+                                String carUrl="MyCar?id="+f.getId()+"&boss="+boss+"&page="+currentpage+"&type="+type;
                             %>
                             <a name="a1" onclick="check()" href=<%=users==null?loginUrl:carUrl%>><button class="bos">添加到餐单</button></a>
                             <script>

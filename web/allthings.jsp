@@ -1,7 +1,8 @@
 <%@ page import="Bean.Users" %>
 <%@ page import="Bean.Foods" %>
 <%@ page import="Dao.FoodDao" %>
-<%@ page import="java.util.List" %><%--
+<%@ page import="java.util.List" %>
+<%@ page import="Dao.UserDao" %><%--
   Created by IntelliJ IDEA.
   User: HandsomeChen
   Date: 2020/6/8
@@ -55,7 +56,9 @@
 </head>
 <body>
 <%
-    List<Foods> list= FoodDao.ManGetfoods();
+    FoodDao foodDao=new FoodDao();
+    UserDao userDao=new UserDao();
+    List<Foods> list= foodDao.ManGetfoods();
     int pageSize=20;
     int allpages=(int) Math.ceil(list.size()/pageSize);
 %>

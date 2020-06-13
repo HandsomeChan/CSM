@@ -49,8 +49,10 @@
 <jsp:include page="head.jsp"></jsp:include>
 <jsp:include page="menu.jsp"></jsp:include>
 <%
+    FoodDao foodDao=new FoodDao();
+    UserDao userDao=new UserDao();
     Users us=(Users) httpSession.getAttribute("user");
-    List<MyBuyFood> list= UserDao.getRecord(us.getEmail());
+    List<MyBuyFood> list= userDao.getRecord(us.getEmail());
     int pageSize=10;
     int allpages=(int) Math.ceil(list.size()/pageSize);
 %>
@@ -90,7 +92,7 @@
                 MyBuyFood food=list.get(i);
         %>
         <tr>
-            <td><a href="FoodInfo.jsp?id=<%=food.getFoodid()%>"><%=food.getFood()%></a></td>
+            <td><a href="FoodInfo.jsp?id=<%=food.getFoodid()%>&page=<%=currentpage%>&myrecord=1"><%=food.getFood()%></a></td>
             <td><a href="BossShop?name=<%=food.getBoss()%>"><%=food.getBoss()%></a></td>
             <td><%=food.getNum()%></td>
             <td><%=food.getTime()%></td>

@@ -1,4 +1,5 @@
 import Bean.Users;
+import Dao.FoodDao;
 import Dao.UserDao;
 
 import javax.servlet.ServletException;
@@ -19,6 +20,8 @@ public class logout extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Users user=(Users) request.getSession().getAttribute("user");
+        FoodDao foodDao=new FoodDao();
+        UserDao userDao=new UserDao();
         if(user==null){
             response.sendRedirect("PageContent");
             return;
@@ -29,7 +32,7 @@ public class logout extends HttpServlet {
         String ip = GetIp.getIpAddress(request);
         String act="登出";
         String r=user.getRole()==0?"顾客":"店家";
-        UserDao.lologs(user.getEmail(), user.getUname(), t, ip, r,act);
+        userDao.lologs(user.getEmail(), user.getUname(), t, ip, r,act);
         request.getSession().removeAttribute("user");
         Cookie cookie=new Cookie("JSESSIONID","msg");
         cookie.setPath(request.getContextPath());
