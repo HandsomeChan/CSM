@@ -64,6 +64,7 @@ public class OrderJudge extends HttpServlet {
             message+="您余额还有"+(us.getMoney()-sum)+"元";
             C3p0Util.close(rs,ps,con);
             httpSession.removeAttribute("cart");
+            httpSession.removeAttribute("map");
             NotifyEmail.sendMail(us.getEmail(),message);
             success=true;
             request.setAttribute("success",success);

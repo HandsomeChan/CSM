@@ -121,7 +121,7 @@
             <td><%=ss.getEmail()%></td>
             <td><%=ss.getNum()%>份</td>
             <td><%=ss.getEarn()%>元</td>
-            <td><a href="/Block?uname=<%=ss.getBoss()%>&role=店家&page=<%=currentpage%>&login=2">
+            <td><a href="Block?uname=<%=ss.getBoss()%>&role=店家&page=<%=currentpage%>&login=2">
                 <button class="bos">封锁账号</button> </a> </td>
         </tr>
         <%

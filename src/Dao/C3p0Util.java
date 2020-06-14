@@ -2,14 +2,18 @@ package Dao;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
+import javax.activation.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class C3p0Util {
+    private static ComboPooledDataSource dataSource=null;
+    static{
+        dataSource=new ComboPooledDataSource();
+    }
     public static Connection getconn(){
-        ComboPooledDataSource dataSource = new ComboPooledDataSource();
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
